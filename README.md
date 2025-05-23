@@ -24,6 +24,6 @@ tandem with [UBC Scheduler]('https://ubcscheduler.ca/') to plan their degrees an
   - HTML5
   - CSS
 - Backend:
-  - Python
+  - Python 3.13.3
     - Django for core backend  
     - Selenium for web scraping
