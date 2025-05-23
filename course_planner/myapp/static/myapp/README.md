@@ -1,1 +1,0 @@
-JavaScript scripts go here!
