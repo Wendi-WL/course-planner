@@ -1,4 +1,4 @@
-import logo from "./logo.svg";
+import logo from "./assets/logo.svg";
 import "./App.css";
 
 // put our routes to the diff pages in here
