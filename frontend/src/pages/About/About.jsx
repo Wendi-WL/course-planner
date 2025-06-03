@@ -6,6 +6,8 @@ function About() {
       <p>1. Degree Tracker aims to help students ... </p>
       <p>2. Eligibility Tool aims to help students ... </p>
       <p>Disclaimer: UBCCoursePlanner is not affiliated with the University of British Columbia. UBC Course Planner is not responsible for...</p>
+
+      <h1>Data</h1>
     </div>
   )
 }

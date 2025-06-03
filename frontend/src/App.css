@@ -55,6 +55,12 @@
   color: black;
 }
 
+.Page h1 {
+  font-family: Bricolage Grotesque;
+  font-size: 49px;
+  font-weight: 700;
+}
+
 .Page p {
   font-family: Inter;
   font-size: 18px;
