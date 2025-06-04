@@ -74,14 +74,13 @@
   line-height: 120%;
 }
 .team-member-cards {
-  display: flex;
-  flex-direction: row; /* horizontal layout */
-  /*justify-content: space-between; /* optional: adds space between */
-  gap: 4px; /* optional: adds gap between items */
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  column-gap: 1rem;
 }
 
 .team-member-card {
-  width: 33%;
+  line-height: 120%;
 }
 
 .team-member-card h3 {
