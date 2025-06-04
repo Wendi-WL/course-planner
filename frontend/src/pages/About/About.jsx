@@ -1,6 +1,39 @@
 import TeamMemberCard from "../../components/ui/TeamMemberCard";
 
 function About() {
+  const teamMembers = [
+        {
+            name: 'Christine',
+            role: 'Product Manager, Frontend Developer',
+            description:
+                'Lorem ipsum dolor sit amet consectetur. Euismod quis diam elementum rhoncus dolor. Ut turpis commodo interdum quisque faucibus.'
+        },
+        {
+            name: 'Dani',
+            role: 'QA Developer',
+            description:
+                'Lorem ipsum dolor sit amet consectetur. Euismod quis diam elementum rhoncus dolor. Ut turpis commodo interdum quisque faucibus.'
+        },
+        {
+            name: 'Enora',
+            role: 'Backend Developer',
+            description:
+                'Lorem ipsum dolor sit amet consectetur. Euismod quis diam elementum rhoncus dolor. Ut turpis commodo interdum quisque faucibus.'
+        },
+        {
+            name: 'Livia',
+            role: 'UX/UI Designer, Frontend Developer',
+            description:
+                'Lorem ipsum dolor sit amet consectetur. Euismod quis diam elementum rhoncus dolor. Ut turpis commodo interdum quisque faucibus.'
+        },
+        {
+            name: 'Wendi',
+            role: 'Backend Developer, API',
+            description:
+                'Lorem ipsum dolor sit amet consectetur. Euismod quis diam elementum rhoncus dolor. Ut turpis commodo interdum quisque faucibus.'
+        }
+    ]
+
   return (
     <div className="Page">
       <div className="Page-header">About</div>
@@ -17,9 +50,9 @@ function About() {
       
       <h1>Meet the Team</h1>
       <div className="team-member-cards">
-        <TeamMemberCard name="Christine" role="Product Manager, Frontend Developer" description="none"></TeamMemberCard>
-        <TeamMemberCard name="Christine" role="Product Manager, Frontend Developer" description="none"></TeamMemberCard>
-        <TeamMemberCard name="Christine" role="Product Manager, Frontend Developer" description="none"></TeamMemberCard>
+          {teamMembers.map((mem) => (
+            <TeamMemberCard name={mem.name} role={mem.role} description={mem.description}></TeamMemberCard>
+          ))}
       </div>
     </div>
   )
