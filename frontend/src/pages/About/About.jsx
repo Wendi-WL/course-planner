@@ -8,6 +8,12 @@ function About() {
       <p>Disclaimer: UBCCoursePlanner is not affiliated with the University of British Columbia. UBC Course Planner is not responsible for...</p>
 
       <h1>Data</h1>
+      <p>- Pre-requisite information is updated prior to course registration.</p>
+      
+      <h1>Motivation</h1>
+      <p>Lorem ipsum dolor sit amet consectetur. Scelerisque pharetra ullamcorper dolor lacus justo vel. Facilisis vitae auctor aenean dictumst tincidunt malesuada. A nulla et neque eu odio faucibus mi pellentesque. Varius interdum scelerisque et pharetra eget nulla. Nec hac laoreet diam gravida consequat magnis egestas gravida. Egestas erat quis nunc dictum. Sed ipsum volutpat est nunc. Faucibus dolor etiam risus a sed cursus. Varius platea eget sem diam nec vulputate magna.</p>
+      
+      <h1>Meet the Team</h1>
     </div>
   )
 }
