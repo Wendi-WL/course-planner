@@ -1,5 +1,7 @@
 .App {
-  text-align: center;
+  /*text-align: center;*/
+  background-color: #CEE8E8;
+  min-height: 100vh;
 }
 
 .App-logo {
@@ -35,4 +37,64 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.Page {
+  margin-left: 10%;  
+  margin-right: 10%;
+} 
+
+.Page-header {
+  min-height: 150px;
+  display: flex;
+  flex-direction: column;
+  /*align-items: center;*/
+  justify-content: center;
+  font-size: 62px;
+  font-weight: 700;
+  font-family: Bricolage Grotesque;
+  color: black;
+}
+
+.Page h1 {
+  font-family: Bricolage Grotesque;
+  font-size: 49px;
+  font-weight: 700;
+}
+
+.Page h2 {
+  font-family: Bricolage Grotesque;
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.Page p {
+  font-family: Inter;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 120%;
+}
+
+/* Meet the Team (About) */
+.team-member-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  column-gap: 1rem;
+}
+
+.team-member-card {
+  line-height: 120%;
+}
+
+.team-member-card h3 {
+  font-family: Inter;
+  font-size: 18px;
+  font-weight: 400;
+  color: #5C8080;
+}
+
+.team-member-card p {
+  font-family: Inter;
+  font-size: 16px;
+  font-weight: 400;
 }
