@@ -1,6 +1,7 @@
 .App {
   /*text-align: center;*/
   background-color: #CEE8E8;
+  min-height: 100vh;
 }
 
 .App-logo {
@@ -73,6 +74,8 @@
   font-weight: 400;
   line-height: 120%;
 }
+
+/* Meet the Team (About) */
 .team-member-cards {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
