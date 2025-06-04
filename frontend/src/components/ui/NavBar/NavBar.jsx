@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import "./NavBar.css";
 import { useState } from "react";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
@@ -29,45 +29,45 @@ function NavBar() {
           onClick={removeActiveClass}
           className={isActive ? "active-item" : ""}
         >
-          <Link
+          <NavLink
             to='/'
             className='link'
           >
             Eligibility Tool
-          </Link>
+          </NavLink>
         </li>
         <li
           onClick={removeActiveClass}
           className={isActive ? "active-item" : ""}
         >
-          <Link
+          <NavLink
             to='/degreetracker'
             className='link'
           >
             Degree Tracker
-          </Link>
+          </NavLink>
         </li>
         <li
           onClick={removeActiveClass}
           className={isActive ? "active-item" : ""}
         >
-          <Link
+          <NavLink
             to='/about'
             className='link'
           >
             About
-          </Link>
+          </NavLink>
         </li>
         <li
           onClick={removeActiveClass}
           className={isActive ? "active-item" : ""}
         >
-          <Link
+          <NavLink
             to='/contact'
             className='link'
           >
             Contact
-          </Link>
+          </NavLink>
         </li>
       </ul>
     </div>
