@@ -61,9 +61,38 @@
   font-weight: 700;
 }
 
+.Page h2 {
+  font-family: Bricolage Grotesque;
+  font-size: 32px;
+  font-weight: 700;
+}
+
 .Page p {
   font-family: Inter;
   font-size: 18px;
   font-weight: 400;
   line-height: 120%;
+}
+.team-member-cards {
+  display: flex;
+  flex-direction: row; /* horizontal layout */
+  /*justify-content: space-between; /* optional: adds space between */
+  gap: 4px; /* optional: adds gap between items */
+}
+
+.team-member-card {
+  width: 33%;
+}
+
+.team-member-card h3 {
+  font-family: Inter;
+  font-size: 18px;
+  font-weight: 400;
+  color: #5C8080;
+}
+
+.team-member-card p {
+  font-family: Inter;
+  font-size: 16px;
+  font-weight: 400;
 }
