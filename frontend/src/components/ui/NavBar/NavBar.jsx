@@ -45,7 +45,7 @@ function NavBar() {
         </li>
         <li onClick={removeActiveClass}>
           <NavLink
-            to='/degreetracker'
+            to='/degree-tracker'
             className='link'
           >
             Degree Tracker

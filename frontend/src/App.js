@@ -17,7 +17,7 @@ function App() {
             element={<EligibilityTool />}
           />
           <Route
-            path='/degreetracker'
+            path='/degree-tracker'
             element={<DegreeTracker />}
           />
           <Route
