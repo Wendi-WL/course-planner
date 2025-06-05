@@ -1,6 +1,6 @@
 .App {
   /*text-align: center;*/
-  background-color: #CEE8E8;
+  background-color: #cee8e8;
   min-height: 100vh;
 }
 
@@ -40,9 +40,9 @@
 }
 
 .Page {
-  margin-left: 10%;  
+  margin-left: 10%;
   margin-right: 10%;
-} 
+}
 
 .Page-header {
   min-height: 150px;
@@ -54,6 +54,7 @@
   font-weight: 700;
   font-family: Bricolage Grotesque;
   color: black;
+  margin-top: 52px;
 }
 
 .Page h1 {
@@ -90,7 +91,7 @@
   font-family: Inter;
   font-size: 18px;
   font-weight: 400;
-  color: #5C8080;
+  color: #5c8080;
 }
 
 .team-member-card p {
