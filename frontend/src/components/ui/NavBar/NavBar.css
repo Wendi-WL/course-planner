@@ -34,7 +34,6 @@ ul {
   list-style-type: none;
   display: flex;
   justify-content: center;
-  /* align-items: end; */
   max-width: 80dvw;
   gap: 22px;
   margin: 0;
@@ -47,7 +46,6 @@ li {
   text-wrap: nowrap;
   margin: 0;
   padding: 4px 0;
-  /* box-sizing: content-box; */
   transition: border-bottom 0.5s;
   border-bottom: solid rgba(38, 28, 28, 0);
 }
@@ -64,12 +62,17 @@ li:hover {
   display: none;
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 660px) {
   .name {
     padding: 0;
   }
   ul {
-    display: none;
+    max-height: 0;
+    opacity: 0;
+    transition: all 0.6s ease-in-out;
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
   }
   .btn-menu {
     display: contents;
@@ -79,10 +82,8 @@ li:hover {
   li,
   .open-list {
     opacity: 1;
-    display: block;
-    box-sizing: border-box;
-    width: 100%;
     text-align: left;
+    max-height: 300px;
   }
 
   li {
