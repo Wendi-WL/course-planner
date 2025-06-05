@@ -7,20 +7,20 @@ import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 // reference: https://www.w3schools.com/howto/howto_js_topnav_responsive.asp
 function NavBar() {
   // adding the states for mobile menu
-  const [isActive, setIsActive] = useState(false);
+  const [isOpen, setisOpen] = useState(false);
   const ref = useRef(null);
 
   // user click outside of menu to close
-  useClickAway(ref, () => setIsActive(false));
+  useClickAway(ref, () => setisOpen(false));
 
-  // useClickAway(ref, () => setIsActive(false));
+  // useClickAway(ref, () => setisOpen(false));
 
-  const toggleActiveClass = () => {
-    setIsActive(!isActive);
+  const toggleOpenClass = () => {
+    setisOpen(!isOpen);
   };
 
-  const removeActiveClass = () => {
-    setIsActive(false);
+  const removeOpenClass = () => {
+    setisOpen(false);
   };
 
   return (
@@ -32,37 +32,45 @@ function NavBar() {
         <strong>UBC</strong>CoursePlanner
       </div>
       <button className='btn-menu'>
-        <MenuRoundedIcon onClick={toggleActiveClass} />
+        <MenuRoundedIcon onClick={toggleOpenClass} />
       </button>
-      <ul className={isActive ? "active-item active-list" : ""}>
-        <li onClick={removeActiveClass}>
+      <ul className={isOpen ? "open-item open-list" : ""}>
+        <li onClick={removeOpenClass}>
           <NavLink
             to='/'
-            className='link'
+            className={({ isActive }) =>
+              isActive ? "link active-link" : "link"
+            }
           >
             Eligibility Tool
           </NavLink>
         </li>
-        <li onClick={removeActiveClass}>
+        <li onClick={removeOpenClass}>
           <NavLink
             to='/degree-tracker'
-            className='link'
+            className={({ isActive }) =>
+              isActive ? "link active-link" : "link"
+            }
           >
             Degree Tracker
           </NavLink>
         </li>
-        <li onClick={removeActiveClass}>
+        <li onClick={removeOpenClass}>
           <NavLink
             to='/about'
-            className='link'
+            className={({ isActive }) =>
+              isActive ? "link active-link" : "link"
+            }
           >
             About
           </NavLink>
         </li>
-        <li onClick={removeActiveClass}>
+        <li onClick={removeOpenClass}>
           <NavLink
             to='/contact'
-            className='link'
+            className={({ isActive }) =>
+              isActive ? "link active-link" : "link"
+            }
           >
             Contact
           </NavLink>
