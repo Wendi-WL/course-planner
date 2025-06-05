@@ -6,6 +6,24 @@ import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 
 // reference: https://www.w3schools.com/howto/howto_js_topnav_responsive.asp
 function NavBar() {
+  const routes = [
+    {
+      path: "/",
+      name: "Degree Tracker",
+    },
+    {
+      path: "/eligibility-tool",
+      name: "Eligibility Tool",
+    },
+    {
+      path: "/about",
+      name: "About",
+    },
+    {
+      path: "/contact",
+      name: "Contact",
+    },
+  ];
   // adding the states for mobile menu
   const [isOpen, setisOpen] = useState(false);
   const ref = useRef(null);
@@ -35,46 +53,18 @@ function NavBar() {
         <MenuRoundedIcon onClick={toggleOpenClass} />
       </button>
       <ul className={isOpen ? "open-item open-list" : ""}>
-        <li onClick={removeOpenClass}>
-          <NavLink
-            to='/'
-            className={({ isActive }) =>
-              isActive ? "link active-link" : "link"
-            }
-          >
-            Eligibility Tool
-          </NavLink>
-        </li>
-        <li onClick={removeOpenClass}>
-          <NavLink
-            to='/degree-tracker'
-            className={({ isActive }) =>
-              isActive ? "link active-link" : "link"
-            }
-          >
-            Degree Tracker
-          </NavLink>
-        </li>
-        <li onClick={removeOpenClass}>
-          <NavLink
-            to='/about'
-            className={({ isActive }) =>
-              isActive ? "link active-link" : "link"
-            }
-          >
-            About
-          </NavLink>
-        </li>
-        <li onClick={removeOpenClass}>
-          <NavLink
-            to='/contact'
-            className={({ isActive }) =>
-              isActive ? "link active-link" : "link"
-            }
-          >
-            Contact
-          </NavLink>
-        </li>
+        {routes.map((route) => (
+          <li onClick={removeOpenClass}>
+            <NavLink
+              to={route.path}
+              className={({ isActive }) =>
+                isActive ? "link active-link" : "link"
+              }
+            >
+              {route.name}
+            </NavLink>
+          </li>
+        ))}
       </ul>
     </div>
   );

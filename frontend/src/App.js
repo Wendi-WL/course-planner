@@ -14,11 +14,11 @@ function App() {
         <Route element={<Layout />}>
           <Route
             path='/'
-            element={<EligibilityTool />}
+            element={<DegreeTracker />}
           />
           <Route
-            path='/degree-tracker'
-            element={<DegreeTracker />}
+            path='/eligibility-tool'
+            element={<EligibilityTool />}
           />
           <Route
             path='/about'
