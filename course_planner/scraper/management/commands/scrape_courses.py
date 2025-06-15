@@ -1,11 +1,11 @@
 # backend/scraper/management/commands/scrape_courses.py
 
 import requests
-import re
+import re # Import for regular expressions
 from bs4 import BeautifulSoup
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction # Import transaction for atomicity
-from scraper.models import Course # Import your Course model
+from scraper.models import Course # Import Course model
 
 class Command(BaseCommand):
     help = 'Scrapes course data from a specified UBC Course Calendar URL and saves it to the database.'
@@ -14,7 +14,7 @@ class Command(BaseCommand):
         parser.add_argument('url', type=str, help='The URL of the course catalog to scrape')
 
     def handle(self, *args, **options):
-        url = options['url'] if 'url' in options else 'https://vancouver.calendar.ubc.ca/course-descriptions/subject/cpscv' # Replace with actual URL
+        url = options['url'] if 'url' in options else 'https://vancouver.calendar.ubc.ca/course-descriptions/subject/cpscv'
 
         self.stdout.write(f"Attempting to scrape from: {url}")
 
@@ -79,6 +79,7 @@ class Command(BaseCommand):
                         self.stdout.write(self.style.WARNING(f"Course element HTML:\n{listing.prettify()}\n"))
                         courses_skipped += 1
                         continue
+                    # a lot of courses getting skipped for this reason, need to find bug...
                 
                     try:
                         if not (100 <= code <= 700):
@@ -91,8 +92,8 @@ class Command(BaseCommand):
                         continue
 
                     try:
-                        credits = int(credits) 
-                        if credits < 0: # Or whatever your minimum credit is
+                        credits = int(credits) # may have errors since some courses have credits format 3-12 for example
+                        if credits < 0: 
                             self.stdout.write(self.style.WARNING(f"Skipping invalid credit: {credits}"))
                             courses_skipped += 1
                             continue
@@ -106,7 +107,7 @@ class Command(BaseCommand):
                     print(f"Credits: {credits}")
                     print(f"Name: {course_name}")
 
-                    # --- Saving to the Database (remains the same) ---
+                    # Saving to the Database
                     try:
                         course_obj = Course.objects.get(subject=subject, code=code)
                         if course_obj.name != course_name or course_obj.credit != credits:
@@ -135,7 +136,7 @@ class Command(BaseCommand):
                 courses_skipped_count += 1
                 continue
 
-        # --- Bulk Create New Courses (remains the same) ---
+        # Bulk Create New Courses 
         if courses_to_create:
             try:
                 with transaction.atomic():
