@@ -31,7 +31,7 @@ class Command(BaseCommand):
             self.stdout.write(self.style.WARNING("No course list found. Check the URL and HTML structure."))
             return
         
-        course_listings = soup.find_all('li')
+        course_listings = soup.find_all('li') # Returns a list
         if not course_listings:
             self.stdout.write(self.style.WARNING("No course entries found within the course list. Check the HTML structure."))
             return
@@ -59,7 +59,7 @@ class Command(BaseCommand):
                     # 3. Parse the pre_name_text to get subject, code, and credits:
                     # Pattern: (Subject) (Code) [(Credits)]
                     # CPSC_V 100 (3)
-                    match = re.match(r'([A-Z_]+)\s+(\d+)\s+\((\d+)\)', pre_name_text)
+                    match = re.match(r'([A-Z_]+)\s+(\d+)\s+\((\d+)(?:-\d+)?\)', pre_name_text)
 
                     subject = ""
                     code = None
@@ -76,6 +76,7 @@ class Command(BaseCommand):
                     # Type validation
                     if not (len(subject) == 4 and subject.isalpha()): # Assuming 4-letter alphabetic subject
                         self.stdout.write(self.style.WARNING(f"Skipping invalid subject format: {subject}"))
+                        self.stdout.write(self.style.WARNING(f"Course element HTML:\n{listing.prettify()}\n"))
                         courses_skipped += 1
                         continue
                 
@@ -127,7 +128,8 @@ class Command(BaseCommand):
                             )
                         )                
                 else:
-                    print("Could not find the h3 tag with class 'text-lg'")  
+                    print("Could not find the h3 tag with class 'text-lg'")
+                    self.stdout.write(self.style.WARNING(f"Listing HTML:\n{listing.prettify()}\n"))  
             except Exception as e:
                 self.stdout.write(self.style.ERROR(f"Error processing listing: {e} - HTML: {course_listings.get_text(strip=True)[:100]}..."))
                 courses_skipped_count += 1
