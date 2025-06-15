@@ -1,3 +1,5 @@
+import "./TeamMemberCard.css"
+
 const TeamMemberCard = ({ name,role,description }) =>{
   return (
     <div className='team-member-card'>

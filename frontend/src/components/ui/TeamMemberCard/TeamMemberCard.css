@@ -1,0 +1,23 @@
+/* Meet the Team (About) */
+.team-member-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  column-gap: 1rem;
+}
+
+.team-member-card {
+  line-height: 120%;
+}
+
+.team-member-card h3 {
+  font-family: Inter;
+  font-size: 18px;
+  font-weight: 400;
+  color: #5c8080;
+}
+
+.team-member-card p {
+  font-family: Inter;
+  font-size: 16px;
+  font-weight: 400;
+}

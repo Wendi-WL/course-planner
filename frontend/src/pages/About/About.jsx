@@ -1,4 +1,4 @@
-import TeamMemberCard from "../../components/ui/TeamMemberCard";
+import TeamMemberCard from "../../components/ui/TeamMemberCard/TeamMemberCard";
 
 function About() {
   const teamMembers = [
