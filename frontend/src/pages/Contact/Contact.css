@@ -56,8 +56,12 @@ p .desc {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.2rem;
+  gap: 1.5rem;
   /* background: yellow; */
+}
+
+.msg-input {
+  background: rgba(245, 244, 244, 0.8);
 }
 
 @media screen and (max-width: 660px) {

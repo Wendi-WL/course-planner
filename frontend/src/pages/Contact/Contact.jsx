@@ -4,6 +4,7 @@ import "./Contact.css";
 import TextField from "@mui/material/TextField";
 
 function Contact() {
+  // styles for the form
   const fieldStyle = { input: { background: "rgba(245, 244, 244, 0.80);" } };
   const shrinkLabel = { inputLabel: { shrink: true } };
 
@@ -47,14 +48,15 @@ function Contact() {
             sx={fieldStyle}
           />
           <TextField
+            className='msg-input'
             required
             fullWidth
             label='Message'
-            multiline
-            rows={4}
+            multiline // textarea element rendered instead of input
+            rows={5}
             placeholder='Type your questions/feedback here'
             slotProps={shrinkLabel}
-            sx={fieldStyle}
+            // sx={fieldStyle}
           />
           <Button text='Send' />
         </div>

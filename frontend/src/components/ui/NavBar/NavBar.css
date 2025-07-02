@@ -94,6 +94,7 @@ li:hover {
     padding-top: 12px;
     padding-bottom: 4px;
     border-bottom: solid;
+    border-width: thin;
     font-size: 14px;
   }
 }
