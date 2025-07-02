@@ -1,3 +1,4 @@
+import Button from "../../components/ui/Button/Button";
 import Footer from "../../components/ui/Footer/Footer";
 import "./Contact.css";
 import TextField from "@mui/material/TextField";
@@ -67,6 +68,7 @@ function Contact() {
               },
             }}
           />
+          <Button text='Send' />
         </div>
       </section>
       <Footer />
