@@ -4,8 +4,8 @@ import "./Contact.css";
 import TextField from "@mui/material/TextField";
 
 function Contact() {
-  // const theme = useTheme();
-  // const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+  const fieldStyle = { input: { background: "rgba(245, 244, 244, 0.80);" } };
+  const shrinkLabel = { inputLabel: { shrink: true } };
 
   return (
     <div className='contact-page'>
@@ -23,11 +23,8 @@ function Contact() {
             variant='outlined'
             placeholder='Enter your name'
             size='small'
-            slotProps={{
-              inputLabel: {
-                shrink: true,
-              },
-            }}
+            slotProps={shrinkLabel}
+            sx={fieldStyle}
           />
           <TextField
             required
@@ -36,11 +33,8 @@ function Contact() {
             variant='outlined'
             placeholder='Enter your email'
             size='small'
-            slotProps={{
-              inputLabel: {
-                shrink: true,
-              },
-            }}
+            slotProps={shrinkLabel}
+            sx={fieldStyle}
           />
           <TextField
             required
@@ -49,11 +43,8 @@ function Contact() {
             variant='outlined'
             placeholder='Enter topic of message'
             size='small'
-            slotProps={{
-              inputLabel: {
-                shrink: true,
-              },
-            }}
+            slotProps={shrinkLabel}
+            sx={fieldStyle}
           />
           <TextField
             required
@@ -62,11 +53,8 @@ function Contact() {
             multiline
             rows={4}
             placeholder='Type your questions/feedback here'
-            slotProps={{
-              inputLabel: {
-                shrink: true,
-              },
-            }}
+            slotProps={shrinkLabel}
+            sx={fieldStyle}
           />
           <Button text='Send' />
         </div>
