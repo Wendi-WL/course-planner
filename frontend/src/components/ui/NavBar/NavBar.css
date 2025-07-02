@@ -63,6 +63,9 @@ li:hover {
 }
 
 @media screen and (max-width: 660px) {
+  .nav-bar {
+    padding: 12px 24px;
+  }
   .name {
     padding: 0;
   }

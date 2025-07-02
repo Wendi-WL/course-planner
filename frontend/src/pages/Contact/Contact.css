@@ -59,3 +59,9 @@ p .desc {
   gap: 1.2rem;
   /* background: yellow; */
 }
+
+@media screen and (max-width: 660px) {
+  .contact-page {
+    margin: 0 24px;
+  }
+}
