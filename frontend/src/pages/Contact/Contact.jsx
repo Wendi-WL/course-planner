@@ -6,9 +6,9 @@ function Contact() {
   // const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
   return (
-    <div className='Page'>
+    <div className='contact-page'>
       <div className='title-desc'>
-        <h1>Contact Us</h1>
+        <h1 className='contact-title'>Contact Us</h1>
         <p className='desc'>
           We'd love to answer any questions and hear any feedback you may have.
         </p>
@@ -45,7 +45,7 @@ function Contact() {
             fullWidth
             label='Subject'
             variant='outlined'
-            placeholder='What is the message about?'
+            placeholder='Enter topic of message'
             size='medium'
             slotProps={{
               inputLabel: {
@@ -54,6 +54,7 @@ function Contact() {
             }}
           />
           <TextField
+            required
             fullWidth
             label='Message'
             multiline

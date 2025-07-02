@@ -1,44 +1,53 @@
-div,
+/* div,
 h1,
 p {
   margin: 0;
   padding: 0;
-}
+} */
 
-.Page {
+.contact-page {
   height: 100svh;
-  margin: 10%;
+  margin: 0 10%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
 
 .title-desc {
-  margin-top: 4.88rem;
+  margin-top: 7rem;
   display: flex;
   flex-direction: column;
+  gap: 1rem;
+  /* display: flex;
+  flex-direction: column;
   gap: 1.6875rem;
+  flex: 0; */
 }
 
-h1 {
-  /* margin: 0;
-  padding: 0; */
+.contact-title {
   line-height: 110%;
+  font-size: 62px;
+  font-weight: 700;
+  font-family: Bricolage Grotesque;
+  color: black;
+  margin: 0;
+  padding: 0;
 }
 
 p .desc {
-  /* margin: 0;
-  padding: 0; */
   font-family: Inter;
   font-size: 1.125rem;
   font-style: normal;
   font-weight: 400;
   line-height: 120%;
+  margin: 0;
+  padding: 0;
 }
 
 .main-contact {
   display: flex;
   justify-content: center;
+  flex: 1;
 }
 
 .form-container {
