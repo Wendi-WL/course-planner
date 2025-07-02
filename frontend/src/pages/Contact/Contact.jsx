@@ -1,3 +1,4 @@
+import Footer from "../../components/ui/Footer/Footer";
 import "./Contact.css";
 import TextField from "@mui/material/TextField";
 
@@ -20,7 +21,7 @@ function Contact() {
             label='Your Name'
             variant='outlined'
             placeholder='Enter your name'
-            size='medium'
+            size='small'
             slotProps={{
               inputLabel: {
                 shrink: true,
@@ -33,7 +34,7 @@ function Contact() {
             label='Your email'
             variant='outlined'
             placeholder='Enter your email'
-            size='medium'
+            size='small'
             slotProps={{
               inputLabel: {
                 shrink: true,
@@ -46,7 +47,7 @@ function Contact() {
             label='Subject'
             variant='outlined'
             placeholder='Enter topic of message'
-            size='medium'
+            size='small'
             slotProps={{
               inputLabel: {
                 shrink: true,
@@ -68,6 +69,7 @@ function Contact() {
           />
         </div>
       </section>
+      <Footer />
     </div>
   );
 }
