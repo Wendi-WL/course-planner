@@ -1,4 +1,5 @@
 import "./Contact.css";
+import TextField from "@mui/material/TextField";
 
 function Contact() {
   // const theme = useTheme();
@@ -13,7 +14,58 @@ function Contact() {
         </p>
       </div>
       <section className='main-contact'>
-        <div className='form-container'></div>
+        <div className='form-container'>
+          <TextField
+            fullWidth
+            label='Your Name'
+            variant='outlined'
+            placeholder='Enter your name'
+            size='medium'
+            slotProps={{
+              inputLabel: {
+                shrink: true,
+              },
+            }}
+          />
+          <TextField
+            required
+            fullWidth
+            label='Your email'
+            variant='outlined'
+            placeholder='Enter your email'
+            size='medium'
+            slotProps={{
+              inputLabel: {
+                shrink: true,
+              },
+            }}
+          />
+          <TextField
+            required
+            fullWidth
+            label='Subject'
+            variant='outlined'
+            placeholder='What is the message about?'
+            size='medium'
+            slotProps={{
+              inputLabel: {
+                shrink: true,
+              },
+            }}
+          />
+          <TextField
+            fullWidth
+            label='Message'
+            multiline
+            rows={4}
+            placeholder='Type your questions/feedback here'
+            slotProps={{
+              inputLabel: {
+                shrink: true,
+              },
+            }}
+          />
+        </div>
       </section>
     </div>
   );
