@@ -130,10 +130,8 @@ class Command(BaseCommand):
                             else:
                                 coreqs = {"(a)" : {"all of" : "None"}}
 
-                            
-                            print(prereqs)
-                            print(coreqs)
-                            coreqs = json.dumps(coreqs, indent=4)
+                            coreqs = json.dumps(coreqs)
+                            prereqs = json.dumps(prereqs)
                         else:
                             print("Could not find the p tag with class 'mt-0'")
 
@@ -152,7 +150,7 @@ class Command(BaseCommand):
                             courses_skipped += 1
                             continue
                         # a lot of courses getting skipped for this reason, need to find bug...
-                    
+
                         try:
                             if not (100 <= code <= 700):
                                 self.stdout.write(self.style.WARNING(f"Skipping code out of range: {code}"))
@@ -181,7 +179,7 @@ class Command(BaseCommand):
                         print(f"Description: {desc}")
                         print(f"Prereqs: {prereqs}")
                         print(f"Coreqs: {coreqs}")
-
+                        
                         # Saving to the Database
                         try:
                             course_obj = Course.objects.get(subject=subject, code=code)
