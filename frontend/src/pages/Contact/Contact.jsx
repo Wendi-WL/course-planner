@@ -5,7 +5,10 @@ import TextField from "@mui/material/TextField";
 
 function Contact() {
   // styles for the form
-  const fieldStyle = { input: { background: "rgba(245, 244, 244, 0.80);" } };
+  const fieldStyle = {
+    zIndex: "1",
+    input: { background: "rgba(245, 244, 244, 0.80);" },
+  };
   const shrinkLabel = { inputLabel: { shrink: true } };
 
   return (
