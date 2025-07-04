@@ -89,3 +89,26 @@ def req_dict(list):
 
     return requirements
 
+def course_info(str):
+    # Separate description from prereqs and coreqs
+    li = re.split(r"(?:[Pp]re|[Cc]o)-?requisite:", str)
+    sect = re.findall(r"(?:[Pp]re|[Cc]o)-?requisite:", str)
+
+    desc = li[0].strip()
+    prereq = None
+    coreq = None
+
+    if len(li) > 2:
+        prereq = li[1].strip()
+        coreq = li[2].strip()
+    elif len(li) == 2 and re.match("pre", sect[0], re.I):
+        prereq = li[1].strip()
+        coreq = None
+    elif len(li) == 2:
+        prereq = None
+        coreq = li[1].strip()
+    else:
+        prereq = None
+        coreq = None
+
+    return [desc, prereq, coreq]

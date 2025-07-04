@@ -88,32 +88,18 @@ class Command(BaseCommand):
                             desc_text = desc_elem.get_text()
 
                             # Separate description from prereqs and coreqs
-                            li = re.split(r"(?:[Pp]re|[Cc]o)-?requisite:", desc_text)
-                            sect = re.findall(r"(?:[Pp]re|[Cc]o)-?requisite:", desc_text)
-
-                            desc = li[0]
-                            prereq = None
-                            coreq = None
-
-                            if len(li) > 2:
-                                prereq = li[1].strip()
-                                coreq = li[2].strip()
-                            elif len(li) == 2 and re.match("pre", sect[0], re.I):
-                                prereq = li[1].strip()
-                                coreq = None
-                            elif len(li) == 2:
-                                prereq = None
-                                coreq = li[1].strip()
-                            else:
-                                prereq = None
-                                coreq = None
+                            info = util.course_info(desc_text)
+                            
+                            desc = info[0]
+                            prereq = info[1]
+                            coreq = info[2]
                             
                             # Make prereqs into dictionary
                             if prereq is not None:
                                 prereqs = util.split_by_option(prereq)
 
                                 for op, req in prereqs.items():
-                                    all_of = re.split("and", req)
+                                    all_of = re.split(" and ", req)
 
                                     prereqs[op] = util.req_dict(all_of)
                             else:
