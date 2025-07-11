@@ -11,7 +11,7 @@ def split_by_option(req):
     id. If string does not start with 'either', return given str
     with id (a) for simplicity in turning into a model"""
 
-    if re.match("either", req, re.I):
+    if re.match(r"(?:either|one of (a))", req, re.I):
         parts = re.split(r"\([a-z]\)", req[7:])
         parts.remove('')
         idxs = re.findall(r"\([a-z]\)", req)
@@ -42,24 +42,42 @@ def req_dict(list):
 
 
         s = s.strip(".,; ")
+        rec = re.search(r"recommended", s, re.I)
+
         if re.match("one of", s, re.I):
             l = re.split(r"(?:\sor|,)\s", s[6:])
             list_to_dict(l, "one of", requirements)
+
+
         elif re.match(r"[A-Z]{4}(?:_V)? ?[0-9]{3}", s):
+            
+            if (s.find("or") > 0):
+                key = "one of"
+            elif rec is not None:
+                key = "recommended"
             courses = re.findall(r"[A-Z]{4}(?:_V)? ?[0-9]{3}", s)
             if key in requirements:
                 requirements[key] += courses
             else:
                 requirements.update({key : courses})
+
+
         else:
-            one = re.search("one of", s, re.I)
-            all = re.search("all of", s, re.I)
+            one = re.search(r"one of", s, re.I)
+            all = re.search(r"all of", s, re.I)
+
             if one is not None:
                 i = one.span()
-                requirements[s[0:i[1]]] = handle_list(re.split(r"(?:\sor\s|,)", s[i[1]:]))
+                if rec is not None:
+                    requirements["recommended"] = handle_list(re.split(r"(?:\sor\s|,)", s[i[1]:]))
+                else:
+                    requirements[s[0:i[1]]] = handle_list(re.split(r"(?:\sor\s|,)", s[i[1]:]))
             elif all is not None:
                 i = all.span()
-                requirements[s[0:i[1]]] = handle_list(re.split(r",\s", s[i[1]:]))
+                if rec is not None:
+                    requirements["recommended"] = handle_list(re.split(r",\s", s[i[1]:]))
+                else:
+                    requirements[s[0:i[1]]] = handle_list(re.split(r",\s", s[i[1]:]))
             elif s != "":
                 if "all of" in requirements:
                     requirements["all of"].append(s)
@@ -91,13 +109,30 @@ def req_dict(list):
 
 def course_info(str):
     # Separate description from prereqs and coreqs
-    li = re.split(r"(?:[Pp]re|[Cc]o)-?requisite:", str)
-    sect = re.findall(r"(?:[Pp]re|[Cc]o)-?requisite:", str)
+    cdf = str.find("This course is not eligible for Credit/D/Fail grading.")
+    equiv = str.find("Equivalency:")
 
+    if ((cdf > 0 and equiv > 0 and cdf > equiv) or (equiv > 0)):
+        s = str[:equiv]
+        equiv = str[equiv-1:]
+    elif (cdf > 0):
+        s = str[:cdf]
+    else:
+        s = str
+    
+    
+    li = re.split(r"(?:[Pp]re|[Cc]o)-?requisite:", s)
+    sect = re.findall(r"(?:[Pp]re|[Cc]o)-?requisite:", s)
+    
     desc = li[0].strip()
     prereq = None
     coreq = None
 
+    if (type(equiv) != int):
+        desc += equiv
+    if (cdf >= 0):
+        desc += " This course is not eligible for Credit/D/Fail grading."
+    
     if len(li) > 2:
         prereq = li[1].strip()
         coreq = li[2].strip()

@@ -25,7 +25,7 @@ class testOptionSplit(unittest.TestCase):
         self.assertEqual(util.split_by_option(info[1]), prereqs)
 
         for op, req in prereqs.items():
-            all_of = re.split("and", req)
+            all_of = re.split(r"(?:\sand\s|\.\s)", req)
             self.assertEqual(all_of, ["CPSC 103."])
 
             prereqs[op] = util.req_dict(all_of)
@@ -45,7 +45,7 @@ class testOptionSplit(unittest.TestCase):
         self.assertEqual(util.split_by_option(info[1]), prereqs)
 
         for op, req in prereqs.items():
-            all_of = re.split("and", req)
+            all_of = re.split(r"(?:\sand\s|\.\s)", req)
             self.assertEqual(all_of, ["One of CPSC_V 203, CPSC_V 210, CPEN_V 221, DSCI_V 221."])
 
             prereqs[op] = util.req_dict(all_of)
@@ -65,7 +65,7 @@ class testOptionSplit(unittest.TestCase):
         self.assertEqual(util.split_by_option(info[1]), prereqs)
 
         for op, req in prereqs.items():
-            all_of = re.split(" and ", req)
+            all_of = re.split(r"(?:\sand\s|\.\s)", req)
             self.assertEqual(all_of, ["BIOL 336", "BIOL 230."])
 
             prereqs[op] = util.req_dict(all_of)
@@ -85,7 +85,7 @@ class testOptionSplit(unittest.TestCase):
         self.assertEqual(util.split_by_option(info[1]), prereqs)
 
         for op, req in prereqs.items():
-            all_of = re.split(" and ", req)
+            all_of = re.split(r"(?:\sand\s|\.\s)", req)
             self.assertEqual(all_of, ["BIOL 336", "BIOL 230."])
 
             prereqs[op] = util.req_dict(all_of)
@@ -106,7 +106,7 @@ class testOptionSplit(unittest.TestCase):
         self.assertEqual(util.split_by_option(info[1]), prereqs)
 
         for op, req in prereqs.items():
-            all_of = re.split(" and ", req)
+            all_of = re.split(r"(?:\sand\s|\.\s)", req)
             self.assertEqual(all_of, ["BIOL 230", "one of BIOL 300, STAT 200."])
 
             prereqs[op] = util.req_dict(all_of)
@@ -128,7 +128,7 @@ class testOptionSplit(unittest.TestCase):
         self.assertEqual(util.split_by_option(info[1]), prereqs)
 
         for op, req in prereqs.items():
-            all_of = re.split(" and ", req)
+            all_of = re.split(r"(?:\sand\s|\.\s)", req)
             self.assertEqual(all_of, ["BIOL 200", "one of BIOL 260, NSCI 200, PSYC 270, PSYC 271, PSYC 304, CAPS 301."])
 
             prereqs[op] = util.req_dict(all_of)
@@ -152,7 +152,7 @@ class testOptionSplit(unittest.TestCase):
         split = {"(a)" : ["BIOL 201"],
                  "(b)" : ["all of BIOL 200, BIOL 260", "one of BIOL 233, BIOL 234."]}
         for op, req in prereqs.items():
-            all_of = re.split(" and ", req)
+            all_of = re.split(r"(?:\sand\s|\.\s)", req)
             self.assertEqual(all_of, split[op])
 
             prereqs[op] = util.req_dict(all_of)
@@ -179,7 +179,7 @@ class testOptionSplit(unittest.TestCase):
                  "(b)" : ["SCIE 001."],
                  "(c)" : ["8 transfer credits of 1st year BIOL", "6 credits of 1st year chemistry."]}
         for op, req in prereqs.items():
-            all_of = re.split(" and ", req)
+            all_of = re.split(r"(?:\sand\s|\.\s)", req)
             self.assertEqual(all_of, split[op])
 
             prereqs[op] = util.req_dict(all_of)
@@ -210,7 +210,7 @@ class testOptionSplit(unittest.TestCase):
                  "(c)" : ["a corequisite of one of CHEM 203 or CHEM 223", "one of BIOL 112 or BIOL 121;"],
                  "(d)" : ["8 transfer credits of first-year BIOL."]}
         for op, req in prereqs.items():
-            all_of = re.split(" and ", req)
+            all_of = re.split(r"(?:\sand\s|\.\s)", req)
             self.assertEqual(all_of, split[op])
 
             prereqs[op] = util.req_dict(all_of)
@@ -221,6 +221,145 @@ class testOptionSplit(unittest.TestCase):
                              "one of" : ["BIOL 112", "BIOL 121"]},
                     "(d)" : {"all of" : ["8 transfer credits of first-year BIOL"]}}
         self.assertEqual(expected, prereqs)
-    
+
+    def test_cdfAtEnd(self):
+        str = "An interdisciplinary conservation course with a solutions-oriented approach to marine issues, drawing from natural sciences, social sciences, business, law, and communication. [2-0-3] Prerequisite: Fourth-year standing. This course is not eligible for Credit/D/Fail grading."
+
+        info = util.course_info(str)
+        self.assertEqual(info[0], "An interdisciplinary conservation course with a solutions-oriented approach to marine issues, drawing from natural sciences, social sciences, business, law, and communication. [2-0-3] This course is not eligible for Credit/D/Fail grading.")
+        self.assertEqual(info[1], "Fourth-year standing.")
+        self.assertEqual(info[2], None)
+
+        prereqs = {"(a)" : "Fourth-year standing."}
+        self.assertEqual(util.split_by_option(info[1]), prereqs)
+
+        split = {"(a)" : ["Fourth-year standing."]}
+        for op, req in prereqs.items():
+            all_of = re.split(r"(?:\sand\s|\.\s)", req)
+            self.assertEqual(all_of, split[op])
+
+            prereqs[op] = util.req_dict(all_of)
+        
+        expected = {"(a)" : {"all of" : ["Fourth-year standing"]}}
+        self.assertEqual(expected, prereqs)
+
+    def test_courseOrCourse(self):
+        str = "Ecology, function, history and conservation of tropical systems. Focus on ecological and evolutionary principles using tropical landscapes as a geographic template. Assessment of factors that make tropical systems vulnerable to degradation. Research project development using analysis of tropical ecology literature. [2-0-2] Prerequisite: BIOL_V 121 or SCIE_V 001 and one of BIOL_V 230, FRST_V 201, GEOS_V 207, GEOB_V 207."
+
+        info = util.course_info(str)
+        self.assertEqual(info[0], "Ecology, function, history and conservation of tropical systems. Focus on ecological and evolutionary principles using tropical landscapes as a geographic template. Assessment of factors that make tropical systems vulnerable to degradation. Research project development using analysis of tropical ecology literature. [2-0-2]")
+        self.assertEqual(info[1], "BIOL_V 121 or SCIE_V 001 and one of BIOL_V 230, FRST_V 201, GEOS_V 207, GEOB_V 207.")
+        self.assertEqual(info[2], None)
+
+        prereqs = {"(a)" : "BIOL_V 121 or SCIE_V 001 and one of BIOL_V 230, FRST_V 201, GEOS_V 207, GEOB_V 207."}
+        self.assertEqual(util.split_by_option(info[1]), prereqs)
+
+        split = {"(a)" : ["BIOL_V 121 or SCIE_V 001", "one of BIOL_V 230, FRST_V 201, GEOS_V 207, GEOB_V 207."]}
+        for op, req in prereqs.items():
+            all_of = re.split(r"(?:\sand\s|\.\s)", req)
+            self.assertEqual(all_of, split[op])
+
+            prereqs[op] = util.req_dict(all_of)
+        
+        expected = {"(a)" : {"all of" : {"one of 1" : ["BIOL_V 121", "SCIE_V 001"],
+                                         "one of 2" : ["BIOL_V 230", "FRST_V 201", "GEOS_V 207", "GEOB_V 207"]}}}
+        self.assertEqual(expected, prereqs)
+
+    def test_withEquivalency(self):
+        str = "Biology and physiology of selected plant-microbe relationships. Impacts of plant-microbe relationships on society. [3-0-2] Prerequisite: BIOL 200 and one of BIOC 202, BIOC 203, BIOL 201, BIOL 233, BIOL 234, BIOL 260. Equivalency: APBI 426"
+
+        info = util.course_info(str)
+        self.assertEqual(info[0], "Biology and physiology of selected plant-microbe relationships. Impacts of plant-microbe relationships on society. [3-0-2] Equivalency: APBI 426")
+        self.assertEqual(info[1], "BIOL 200 and one of BIOC 202, BIOC 203, BIOL 201, BIOL 233, BIOL 234, BIOL 260.")
+        self.assertEqual(info[2], None)
+
+        prereqs = {"(a)" : "BIOL 200 and one of BIOC 202, BIOC 203, BIOL 201, BIOL 233, BIOL 234, BIOL 260."}
+        self.assertEqual(util.split_by_option(info[1]), prereqs)
+
+        split = {"(a)" : ["BIOL 200", "one of BIOC 202, BIOC 203, BIOL 201, BIOL 233, BIOL 234, BIOL 260."]}
+        for op, req in prereqs.items():
+            all_of = re.split(r"(?:\sand\s|\.\s)", req)
+            self.assertEqual(all_of, split[op])
+
+            prereqs[op] = util.req_dict(all_of)
+        
+        expected = {"(a)" : {"all of" : ["BIOL 200"],
+                             "one of" : ["BIOC 202", "BIOC 203", "BIOL 201", "BIOL 233", "BIOL 234", "BIOL 260"]}}
+        self.assertEqual(expected, prereqs)
+
+    def test_recommendedPrereq(self):
+        str = "Biodiversity from an evolutionary perspective. The evolutionary (phylogenetic) tree of genetic descent that links all organisms: its reconstruction, interpretation, and implications for fields from ecology to molecular biology. [2-0-2] Prerequisite: BIOL 200 and one of BIOL 233, BIOL 234. BIOL 336 is recommended"
+
+        info = util.course_info(str)
+        self.assertEqual(info[0], "Biodiversity from an evolutionary perspective. The evolutionary (phylogenetic) tree of genetic descent that links all organisms: its reconstruction, interpretation, and implications for fields from ecology to molecular biology. [2-0-2]")
+        self.assertEqual(info[1], "BIOL 200 and one of BIOL 233, BIOL 234. BIOL 336 is recommended")
+        self.assertEqual(info[2], None)
+
+        prereqs = {"(a)" : "BIOL 200 and one of BIOL 233, BIOL 234. BIOL 336 is recommended"}
+        self.assertEqual(util.split_by_option(info[1]), prereqs)
+
+        split = {"(a)" : ["BIOL 200", "one of BIOL 233, BIOL 234", "BIOL 336 is recommended"]}
+        for op, req in prereqs.items():
+            all_of = re.split(r"(?:\sand\s|\.\s)", req)
+            self.assertEqual(all_of, split[op])
+
+            prereqs[op] = util.req_dict(all_of)
+        
+        expected = {"(a)" : {"all of" : ["BIOL 200"],
+                             "one of" : ["BIOL 233", "BIOL 234"],
+                             "recommended" : ["BIOL 336"]}}
+        self.assertEqual(expected, prereqs)
+
+
+        str = "Introduction to the processes involved in growth and development: cell division, tissue culture, meristems, differentiation, and the action of major growth regulators, and photomorphogenesis. Emphasis on experimental approaches. [2-3-1] Prerequisite: Either (a) BIOL 200 and one of BIOL 233, BIOL 234; or (b) FRST 302. CHEM 233 is recommended."
+
+        info = util.course_info(str)
+        self.assertEqual(info[0], "Introduction to the processes involved in growth and development: cell division, tissue culture, meristems, differentiation, and the action of major growth regulators, and photomorphogenesis. Emphasis on experimental approaches. [2-3-1]")
+        self.assertEqual(info[1], "Either (a) BIOL 200 and one of BIOL 233, BIOL 234; or (b) FRST 302. CHEM 233 is recommended.")
+        self.assertEqual(info[2], None)
+
+        prereqs = {"(a)" : "BIOL 200 and one of BIOL 233, BIOL 234;",
+                   "(b)" : "FRST 302. CHEM 233 is recommended."}
+        self.assertEqual(util.split_by_option(info[1]), prereqs)
+
+        split = {"(a)" : ["BIOL 200", "one of BIOL 233, BIOL 234;"],
+                 "(b)" : ["FRST 302", "CHEM 233 is recommended."]}
+        for op, req in prereqs.items():
+            all_of = re.split(r"(?:\sand\s|\.\s)", req)
+            self.assertEqual(all_of, split[op])
+
+            prereqs[op] = util.req_dict(all_of)
+        
+        expected = {"(a)" : {"all of" : ["BIOL 200"],
+                             "one of" : ["BIOL 233", "BIOL 234"]},
+                    "(b)" : {"all of" : ["FRST 302"],
+                             "recommended" : ["CHEM 233"]}}
+        self.assertEqual(expected, prereqs)
+
+    def test_subSplit(self):
+        str = "Field-based and laboratory-based investigation of organisms. [1-3-0] Prerequisite: Third-year standing or higher in Combined Major in Science, and one of (a) BIOL 121 and BIOL 180 (or BIOL 140), or (b) SCIE 001, or (c) 8 transfer credits of first-year biology."
+
+        info = util.course_info(str)
+        self.assertEqual(info[0], "Field-based and laboratory-based investigation of organisms. [1-3-0]")
+        self.assertEqual(info[1], "Third-year standing or higher in Combined Major in Science, and one of (a) BIOL 121 and BIOL 180 (or BIOL 140), or (b) SCIE 001, or (c) 8 transfer credits of first-year biology.")
+        self.assertEqual(info[2], None)
+
+        prereqs = {"(a)" : "Third-year standing or higher in Combined Major in Science, and one of (a) BIOL 121 and BIOL 180 (or BIOL 140), or (b) SCIE 001, or (c) 8 transfer credits of first-year biology."}
+        self.assertEqual(util.split_by_option(info[1]), prereqs)
+
+        split = {"(a)" : ["Third-year standing or higher in Combined Major in Science", "one of (a) BIOL 121 and BIOL 180 (or BIOL 140), or (b) SCIE 001, or (c) 8 transfer credits of first-year biology."]}
+        for op, req in prereqs.items():
+            all_of = re.split(r"(?:\sand\s|\.\s)", req)
+            self.assertEqual(all_of, split[op])
+
+            prereqs[op] = util.req_dict(all_of)
+        
+        expected = {"(a)" : {"all of" : ["Third-year standing or higher in Combined Major in Science"],
+                             "one of" : {"(a)" : {"all of" : ["BIOL 121", "BIOL 180 (or BIOL 140)"]},
+                                         "(b)" : {"all of" : ["SCIE 001"]},
+                                         "(c)" : {"all of" : ["8 transfer credits of first-year biology."]}}}}
+        self.assertEqual(expected, prereqs)
+
+
 if __name__ == '__main__':
     unittest.main()
