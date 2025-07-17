@@ -73,27 +73,6 @@ class testOptionSplit(unittest.TestCase):
         expected = {"(a)" : {"all of" : ["BIOL 336", "BIOL 230"]}}
         self.assertEqual(expected, prereqs)
 
-    def test_multiAllOf(self):
-        str = "Ecological adaptation and evolutionary processes in contemporary populations; natural selection, variation, optimization, foraging theory, coevolution, arms races; life history theory, evolution of sex, sexual selection, evolution in managed populations. [2-2-0] Prerequisite: BIOL 336 and BIOL 230."
-
-        info = util.course_info(str)
-        self.assertEqual(info[0], "Ecological adaptation and evolutionary processes in contemporary populations; natural selection, variation, optimization, foraging theory, coevolution, arms races; life history theory, evolution of sex, sexual selection, evolution in managed populations. [2-2-0]")
-        self.assertEqual(info[1], "BIOL 336 and BIOL 230.")
-        self.assertEqual(info[2], None)
-
-        prereqs = {"(a)" : "BIOL 336 and BIOL 230."}
-        self.assertEqual(util.split_by_option(info[1]), prereqs)
-
-        for op, req in prereqs.items():
-            all_of = re.split(r"(?:\sand\s|\.\s)", req)
-            self.assertEqual(all_of, ["BIOL 336", "BIOL 230."])
-
-            prereqs[op] = util.req_dict(all_of)
-        
-        expected = {"(a)" : {"all of" : ["BIOL 336", "BIOL 230"]}}
-        self.assertEqual(expected, prereqs)
-
-
     def test_mixAllOfOneOf(self):
         str = "Design, execution, and analysis of ecological surveys and experiments. Practical field methods for estimating population metrics and describing community structure. Computer techniques for the statistical analysis of ecological data. [2-4-0] Prerequisite: BIOL 230 and one of BIOL 300, STAT 200."
 
