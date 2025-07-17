@@ -98,7 +98,7 @@ def req_dict(s):
 
     def handle_str(s):
         # Assume string does not need to be split by 'and's or options
-        s = s.strip(".,; ")
+        s = s.strip(".,;[] ")
         course = re.fullmatch(r"([A-Z]{4})(?:_V)? ?([0-9]{3})", s)
 
         if re.search(r"recommend(?:ed)?", s, re.I) is not None:
@@ -141,14 +141,19 @@ def req_dict(s):
             return s
             
     def handle_list(l, dict):
+        #print("\n")
+        #print(l)
+        #print(dict)
         li = []
         if not dict:
             ret_dict = False
         else:
             ret_dict = True
+
         for s in l:
             s = s.strip(".,[] ")
             d = handle_str(s)
+            #print(d)
             if type(d) == dict:
                 ret_dict = True
                 for k, v in d.items():
@@ -158,8 +163,16 @@ def req_dict(s):
                 add_to_dict("all of", d, dict)
         
         if ret_dict:
+            #print("dict:")
+            #print(dict)
+            #print("(list:)")
+            #print(li)
             return dict
         else:
+            #print("list:")
+            #print(li)
+            #print("(dict:)")
+            #print(dict)
             return li
     
     def add_to_dict(key, val, d):

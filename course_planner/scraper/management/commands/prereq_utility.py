@@ -109,27 +109,21 @@ def req_dict(list):
 
 def course_info(str):
     # Separate description from prereqs and coreqs
-    cdf = str.find("This course is not eligible for Credit/D/Fail grading.")
-    equiv = str.find("Equivalency:")
+    cdf = re.search(r"This course is not eligible for Credit/D/Fail grading.", str)
 
-    if ((cdf > 0 and equiv > 0 and cdf > equiv) or (equiv > 0)):
-        s = str[:equiv]
-        equiv = str[equiv-1:]
-    elif (cdf > 0):
-        s = str[:cdf]
-    else:
-        s = str
+    if cdf is not None:
+        s = str[:cdf.start()] + str[cdf.end():]
     
-    
-    li = re.split(r"(?:[Pp]re|[Cc]o)-?requisite:", s)
+    li = re.split(r"(?:[Rr]ecommended )?(?:[Pp]re|[Cc]o)-?requisite[s]:", s)
     sect = re.findall(r"(?:[Pp]re|[Cc]o)-?requisite:", s)
+    equiv = re.search(r"equivalency:", str, re.I)
     
     desc = li[0].strip()
     prereq = None
     coreq = None
 
-    if (type(equiv) != int):
-        desc += equiv
+    if equiv is not None:
+        desc += str[equiv.end():]
     if (cdf >= 0):
         desc += " This course is not eligible for Credit/D/Fail grading."
     

@@ -118,6 +118,11 @@ class testReqDict(unittest.TestCase):
         expected = {"all of" : ["CPSC 103"]}
         self.assertEqual(reqs, expected)
 
+        str = "[CHEM498]"
+        reqs = util.req_dict(str)
+        expected = {"all of" : ["CHEM 498"]}
+        self.assertEqual(reqs, expected)
+
     def test_simpleOneOf(self):
         str = "One of CPSC_V 203, CPSC_V 210, CPEN_V 221, DSCI_V 221."
         reqs = util.req_dict(str)
@@ -143,10 +148,14 @@ class testReqDict(unittest.TestCase):
                     "one of" : ["BIOL 260", "NSCI 200", "PSYC 270", "PSYC 271", "PSYC 304", "CAPS 301"]}
         self.assertEqual(reqs, expected)
 
+        str = "One of CHEM 211, CHEM 215 and all of CHEM 208, CHEM 213, CHEM 245."
+        reqs = util.req_dict(str)
+        expected = {"one of" : ["CHEM 221", "CHEM 215"],
+                    "all of" : ["CHEM 208", "CHEM 213", "CHEM 245"]}
+
     def test_atypicalOptions(self):
         str = "Either (a) BIOL 201 or (b) all of BIOL 200, BIOL 260 and one of BIOL 233, BIOL 234."
         reqs = util.req_dict(str)
-        print(reqs)
         expected = {"one of" : {"(a)" : ["BIOL 201"],
                                 "(b)" : {"all of" : ["BIOL 200", "BIOL 260"],
                                          "one of" : ["BIOL 233", "BIOL 234"]}}}
@@ -155,9 +164,17 @@ class testReqDict(unittest.TestCase):
         str = "Either (a) all of BIOL 112, BIOL 121 or (b) SCIE 001. or (c) 8 transfer credits of 1st year BIOL and 6 credits of 1st year chemistry."
         reqs = util.req_dict(str)
         expected = {"one of" : {"(a)" : {"all of" : ["BIOL 112", "BIOL 121"]},
-                                "(b)" : {"all of" : ["SCIE 001"]},
-                                "(c)" : {"all of" : ["8 transfer credits of 1st year BIOL",
-                                                     "6 credits of 1st year chemistry"]}}}
+                                "(b)" : ["SCIE 001"],
+                                "(c)" : ["8 transfer credits of 1st year BIOL and 6 credits of 1st year chemistry"]}}
+        self.assertEqual(reqs, expected)
+
+        str = "Either (a) SCIE 001 or (b) one of MATH 100, MATH 102, MATH 104, MATH 110, MATH 120, MATH 180, MATH 184 and one of CHEM 130, CHEM 123, CHEM 154."
+        reqs = util.req_dict(str)
+        expected = {"one of" : {"(a)" : ["SCIE 001"],
+                                "(b)" : {"all of" : {"one of" : ["MATH 100", "MATH 102", "MATH 104", "MATH 110", "MATH 120", "MATH 180", "MATH 184"],
+                                                     "one of 0" : ["CHEM 130", "CHEM 123","CHEM 154"]}}}}
+        print(reqs)
+        print(expected)
         self.assertEqual(reqs, expected)
 
         str = "Either (a) all of BIOL 112, BIOL 121 or (b) SCIE 001 ; (c) a corequisite of one of CHEM 203 or CHEM 223 and one of BIOL 112 or BIOL 121; or (d) 8 transfer credits of first-year BIOL."
