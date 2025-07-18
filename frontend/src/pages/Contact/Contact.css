@@ -1,0 +1,71 @@
+/* div,
+h1,
+p {
+  margin: 0;
+  padding: 0;
+} */
+
+.contact-page {
+  height: 100svh;
+  margin: 0 10%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.title-desc {
+  margin-top: 4.87rem;
+  display: flex;
+  flex-direction: column;
+  /* gap: 0.5rem; */
+  /* display: flex;
+  flex-direction: column;
+  gap: 1.6875rem;
+  flex: 0; */
+}
+
+.contact-title {
+  line-height: 110%;
+  font-size: 62px;
+  font-weight: 700;
+  font-family: Bricolage Grotesque;
+  color: black;
+  margin: 0;
+  padding: 0;
+}
+
+p .desc {
+  font-family: Inter;
+  font-size: 1.125rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 120%;
+  margin: 0;
+  padding: 0;
+}
+
+.main-contact {
+  display: flex;
+  justify-content: center;
+  /* flex: 1; */
+}
+
+.form-container {
+  width: 26.025rem;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  /* background: yellow; */
+}
+
+.msg-input {
+  background: rgba(245, 244, 244, 0.8);
+}
+
+@media screen and (max-width: 660px) {
+  .contact-page {
+    margin: 0 24px;
+  }
+}
