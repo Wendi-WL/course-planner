@@ -27,3 +27,8 @@ tandem with [UBC Scheduler]('https://ubcscheduler.ca/') to plan their degrees an
   - Python 3.13.3
     - Django for core backend  
     - Selenium for web scraping
+
+##  Installation
+
+1. Make sure to have the latest Java downloaded on your computer
+2. React ... (Need to write this)
