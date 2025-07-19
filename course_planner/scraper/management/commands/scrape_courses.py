@@ -1,11 +1,21 @@
 # backend/scraper/management/commands/scrape_courses.py
 
+# Add scraper to sys.path
+import os
+import sys
+import inspect
+commands = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+course_planner = os.path.dirname(os.path.dirname(os.path.dirname(commands)))
+sys.path.insert(0, course_planner) 
 import requests
 import re # Import for regular expressions
 from bs4 import BeautifulSoup
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction # Import transaction for atomicity
+import scraper.management.commands.utility as util # Import util for prereq parsing
+import json # Import json for storing prereqs/coreqs in db
 from scraper.models import Course # Import Course model
+
 
 class Command(BaseCommand):
     help = 'Scrapes course data from a specified UBC Course Calendar URL and saves it to the database.'
@@ -40,100 +50,156 @@ class Command(BaseCommand):
         courses_created = 0
         courses_updated = 0
         courses_skipped = 0
+        
+        prereqs_counted = 0
+        coreqs_counted = 0
+        failed_prereqs = []
+        f_prereq_count = 0
+        failed_coreqs = []
+        f_coreq_count = 0
 
         for listing in course_listings:
             try:
                 # Extract data using BeautifulSoup selectors
-                course_elem = listing.find('h3', class_='text-lg') 
-
+                course_elem = listing.find('article', class_="node--type-course")
                 if course_elem:
-                    # 1. Extract the Course Name:
-                    # The course name is inside the <strong> tag.
-                    name_tag = course_elem.find('strong')
-                    course_name = name_tag.get_text(strip=True) if name_tag else ""
 
-                    # 2. Get the text before the <strong> tag:
-                    # This part contains "CPSC_V 100 (3)"
-                    pre_name_text = course_elem.get_text(separator=' ', strip=True).replace(course_name, '').strip()
+                    title_elem = course_elem.find('h3', class_='text-lg') 
+                    desc_elem = course_elem.find("p", class_="mt-0")
+                    
 
-                    # 3. Parse the pre_name_text to get subject, code, and credits:
-                    # Pattern: (Subject) (Code) [(Credits)]
-                    # CPSC_V 100 (3)
-                    match = re.match(r'([A-Z_]+)\s+(\d+)\s+\((\d+)(?:-\d+)?\)', pre_name_text)
+                    if title_elem:
+                        # 1. Extract the Course Name:
+                        # The course name is inside the <strong> tag.
+                        name_tag = title_elem.find('strong')
+                        course_name = name_tag.get_text(strip=True) if name_tag else ""
 
-                    subject = ""
-                    code = None
-                    credits = None
+                        # 2. Get the text before the <strong> tag:
+                        # This part contains "CPSC_V 100 (3)"
+                        pre_name_text = title_elem.get_text(separator=' ', strip=True).replace(course_name, '').strip()
 
-                    if match:
-                        subject = match.group(1) # CPSC_V
-                        code = int(match.group(2)) # 100
-                        credits = int(match.group(3)) # 3
+                        # 3. Parse the pre_name_text to get subject, code, and credits:
+                        # Pattern: (Subject) (Code) [(Credits)]
+                        # CPSC_V 100 (3)
+                        match = re.match(r'([A-Z_]+)\s+(\d+)\s+\((\d+)(?:-\d+)?\)', pre_name_text)
+
+                        subject = ""
+                        code = None
+                        credits = None
+                        desc = ""
+                        prereqs = None
+                        coreqs = None
+
+                        if desc_elem:
+                            # Get text from the paragraph (this includes course desc, prereqs, coreqs)
+                            desc_text = desc_elem.get_text()
+
+                            # Separate description from prereqs and coreqs
+                            info = util.course_info(desc_text)
+                            
+                            for k, v in info.items():
+                                if k == "description":
+                                    desc = v
+                                elif re.fullmatch(r"(?:[Rr]ecommended )?pre-?requisite(?:s)?", k, re.I):
+                                    prereqs = v
+                                else:
+                                    coreqs = v
+                            
+                            # Make prereqs into dictionary
+                            try:
+                                pr = util.req_dict(prereqs)
+                                prereqs_counted += 1
+                                prereqs = json.dumps(pr)
+                            except:
+                                failed_prereqs.append(prereqs)
+                                f_prereq_count += 1
+
+                            # Make coreqs into dictionary
+                            try:
+                                cr = util.req_dict(coreqs)
+                                coreqs_counted += 1
+                                coreqs = json.dumps(cr)
+                            except:
+                                failed_coreqs.append(coreqs)
+                                f_coreq_count += 1
+
+                        else:
+                            print("Could not find the p tag with class 'mt-0'")
+
+                        if match:
+                            subject = match.group(1) # CPSC_V
+                            code = int(match.group(2)) # 100
+                            credits = int(match.group(3)) # 3
 
                         # to strip "_V" from the subject:
                         subject = subject.split('_')[0] if '_' in subject else subject
                     
-                    # Type validation
-                    if not (len(subject) == 4 and subject.isalpha()): # Assuming 4-letter alphabetic subject
-                        self.stdout.write(self.style.WARNING(f"Skipping invalid subject format: {subject}"))
-                        self.stdout.write(self.style.WARNING(f"Course element HTML:\n{listing.prettify()}\n"))
-                        courses_skipped += 1
-                        continue
-                    # a lot of courses getting skipped for this reason, need to find bug...
-                
-                    try:
-                        if not (100 <= code <= 700):
-                            self.stdout.write(self.style.WARNING(f"Skipping code out of range: {code}"))
+                        # Type validation
+                        if not (len(subject) == 4 and subject.isalpha()): # Assuming 4-letter alphabetic subject
+                            self.stdout.write(self.style.WARNING(f"Skipping invalid subject format: {subject}"))
+                            self.stdout.write(self.style.WARNING(f"Course element HTML:\n{listing.prettify()}\n"))
                             courses_skipped += 1
                             continue
-                    except ValueError:
-                        self.stdout.write(self.style.WARNING(f"Skipping invalid code (not a number): {code}"))
-                        courses_skipped += 1
-                        continue
+                        # a lot of courses getting skipped for this reason, need to find bug...
 
-                    try:
-                        credits = int(credits) # may have errors since some courses have credits format 3-12 for example
-                        if credits < 0: 
-                            self.stdout.write(self.style.WARNING(f"Skipping invalid credit: {credits}"))
+                        try:
+                            if not (100 <= code <= 700):
+                                self.stdout.write(self.style.WARNING(f"Skipping code out of range: {code}"))
+                                courses_skipped += 1
+                                continue
+                        except ValueError:
+                            self.stdout.write(self.style.WARNING(f"Skipping invalid code (not a number): {code}"))
                             courses_skipped += 1
                             continue
-                    except ValueError:
-                        self.stdout.write(self.style.WARNING(f"Skipping invalid credit (not a number): {credits}"))
-                        courses_skipped += 1
-                        continue
 
-                    print(f"Subject: {subject}")
-                    print(f"Code: {code}")
-                    print(f"Credits: {credits}")
-                    print(f"Name: {course_name}")
+                        try:
+                            credits = int(credits) # may have errors since some courses have credits format 3-12 for example
+                            if credits < 0: 
+                                self.stdout.write(self.style.WARNING(f"Skipping invalid credit: {credits}"))
+                                courses_skipped += 1
+                                continue
+                        except ValueError:
+                            self.stdout.write(self.style.WARNING(f"Skipping invalid credit (not a number): {credits}"))
+                            courses_skipped += 1
+                            continue
 
-                    # Saving to the Database
-                    try:
-                        course_obj = Course.objects.get(subject=subject, code=code)
-                        if course_obj.name != course_name or course_obj.credit != credits:
-                            course_obj.name = course_name
-                            course_obj.credit = credits
-                            course_obj.save()
-                            self.stdout.write(self.style.MIGRATE_HEADING(f"Updated: {course_obj}"))
-                            courses_updated_count += 1
-                        else:
-                            self.stdout.write(self.style.NOTICE(f"Existing: {course_obj} (no changes needed)"))
+                        print(f"Subject: {subject}")
+                        print(f"Code: {code}")
+                        print(f"Credits: {credits}")
+                        print(f"Name: {course_name}")
+                        print(f"Description: {desc}")
+                        print(f"Prereqs: {prereqs}")
+                        print(f"Coreqs: {coreqs}")
+                        
+                        # Saving to the Database
+                        try:
+                            course_obj = Course.objects.get(subject=subject, code=code)
+                            if course_obj.name != course_name or course_obj.credit != credits:
+                                course_obj.name = course_name
+                                course_obj.credit = credits
+                                course_obj.desc = desc
+                                course_obj.prereqs = prereqs
+                                course_obj.coreqs = coreqs
+                                course_obj.save()
+                                self.stdout.write(self.style.MIGRATE_HEADING(f"Updated: {course_obj}"))
+                                courses_updated += 1
+                            else:
+                                self.stdout.write(self.style.NOTICE(f"Existing: {course_obj} (no changes needed)"))
 
-                    except Course.DoesNotExist:
-                        courses_to_create.append(
-                            Course(
-                                subject=subject,
-                                code=code,
-                                name=course_name,
-                                credit=credits
-                            )
-                        )                
+                        except Course.DoesNotExist:
+                            courses_to_create.append(
+                                Course(
+                                    subject=subject,
+                                    code=code,
+                                    name=course_name,
+                                    credit=credits
+                                )
+                            )                
                 else:
-                    print("Could not find the h3 tag with class 'text-lg'")
-                    self.stdout.write(self.style.WARNING(f"Listing HTML:\n{listing.prettify()}\n"))  
+                    print("Could not find the h3 tag with class 'text-lg'")  
             except Exception as e:
-                self.stdout.write(self.style.ERROR(f"Error processing listing: {e} - HTML: {course_listings.get_text(strip=True)[:100]}..."))
-                courses_skipped_count += 1
+                self.stdout.write(self.style.ERROR(f"Error processing listing: {e} - HTML: {listing.prettify()[:100]}..."))
+                courses_skipped += 1
                 continue
 
         # Bulk Create New Courses 
