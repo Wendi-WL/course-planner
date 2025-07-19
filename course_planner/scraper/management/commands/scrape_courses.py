@@ -12,7 +12,7 @@ import re # Import for regular expressions
 from bs4 import BeautifulSoup
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction # Import transaction for atomicity
-import scraper.management.commands.prereq_utility as util # Import util for prereq parsing
+import scraper.management.commands.utility as util # Import util for prereq parsing
 import json # Import json for storing prereqs/coreqs in db
 from scraper.models import Course # Import Course model
 
@@ -50,6 +50,13 @@ class Command(BaseCommand):
         courses_created = 0
         courses_updated = 0
         courses_skipped = 0
+        
+        prereqs_counted = 0
+        coreqs_counted = 0
+        failed_prereqs = []
+        f_prereq_count = 0
+        failed_coreqs = []
+        f_coreq_count = 0
 
         for listing in course_listings:
             try:
@@ -90,34 +97,32 @@ class Command(BaseCommand):
                             # Separate description from prereqs and coreqs
                             info = util.course_info(desc_text)
                             
-                            desc = info[0]
-                            prereq = info[1]
-                            coreq = info[2]
+                            for k, v in info.items():
+                                if k == "description":
+                                    desc = v
+                                elif re.fullmatch(r"(?:[Rr]ecommended )?pre-?requisite(?:s)?", k, re.I):
+                                    prereqs = v
+                                else:
+                                    coreqs = v
                             
                             # Make prereqs into dictionary
-                            if prereq is not None:
-                                prereqs = util.split_by_option(prereq)
-
-                                for op, req in prereqs.items():
-                                    all_of = re.split(" and ", req)
-
-                                    prereqs[op] = util.req_dict(all_of)
-                            else:
-                                prereqs = {"(a)" : {"all of" : "None"}}
+                            try:
+                                pr = util.req_dict(prereqs)
+                                prereqs_counted += 1
+                                prereqs = json.dumps(pr)
+                            except:
+                                failed_prereqs.append(prereqs)
+                                f_prereq_count += 1
 
                             # Make coreqs into dictionary
-                            if coreq is not None:
-                                coreqs = util.split_by_option(coreq)
+                            try:
+                                cr = util.req_dict(coreqs)
+                                coreqs_counted += 1
+                                coreqs = json.dumps(cr)
+                            except:
+                                failed_coreqs.append(coreqs)
+                                f_coreq_count += 1
 
-                                for op, req in coreqs.items():
-                                    all_of = re.split("and", req)
-
-                                    coreqs[op] = util.req_dict(all_of)
-                            else:
-                                coreqs = {"(a)" : {"all of" : "None"}}
-
-                            coreqs = json.dumps(coreqs)
-                            prereqs = json.dumps(prereqs)
                         else:
                             print("Could not find the p tag with class 'mt-0'")
 

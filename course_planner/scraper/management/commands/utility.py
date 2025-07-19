@@ -106,14 +106,14 @@ def req_dict(s):
         
         if re.match(r"one of ", s, re.I):
             l = re.split(r"(?:\sor|,)\s", s[6:])
-            return {"one of" : handle_list(l, {})}
+            return {"one of" : handle_list(l)}
         
         if re.match(r"all of ", s, re.I):
             l = split_dot_and(s[6:])
             if l is not None:
-                return handle_list(l, {})
+                return handle_list(l)
             else:
-                return {"all of" : handle_list(re.split(r"(?:\sand|,)\s", s[6:]), {})}
+                return {"all of" : handle_list(re.split(r"(?:\sand|,)\s", s[6:]))}
         
         if course is not None:
             return course[1] + " " + course[2]
@@ -133,51 +133,27 @@ def req_dict(s):
 
         if one is not None:
             i = one.end()
-            return {s[0:i] : handle_list(re.split(r"(?:\sor|,)\s", s[i:], re.I), {})}
+            return {s[:i] : handle_list(re.split(r"(?:\sor|,)\s", s[i:], re.I))}
         elif all is not None:
             i = all.span()
-            return {s[0:i] : handle_list(re.split(r"(?:\sand|,)\s", s[i:], re.I), {})}
+            return {s[:i] : handle_list(re.split(r"(?:\sand|,)\s", s[i:], re.I))}
         else:
             return s
             
-    def handle_list(l, dict):
-        #print("\n")
-        #print(l)
-        #print(dict)
+    def handle_list(l):
         li = []
-        if not dict:
-            ret_dict = False
-        else:
-            ret_dict = True
 
         for s in l:
             s = s.strip(".,[] ")
             d = handle_str(s)
-            #print(d)
-            if type(d) == dict:
-                ret_dict = True
-                for k, v in d.items():
-                    add_to_dict(k, v, dict)
-            else:
-                li.append(d)
-                add_to_dict("all of", d, dict)
-        
-        if ret_dict:
-            #print("dict:")
-            #print(dict)
-            #print("(list:)")
-            #print(li)
-            return dict
-        else:
-            #print("list:")
-            #print(li)
-            #print("(dict:)")
-            #print(dict)
-            return li
+            li.append(d)
+
+        return li
     
     def add_to_dict(key, val, d):
         if type(val) == str:
             val = [val]
+
         if key == "one of" and key in d:
             i = 0
             while key in d:
@@ -221,3 +197,36 @@ def req_dict(s):
         add_str(s)
 
     return reqs
+
+def course_info(str):
+    # Separate description from prereqs and coreqs
+    cdf = re.search(r"This course is not eligible for Credit/D/Fail grading.", str)
+    equiv = re.search(r"equivalency:", str, re.I)
+
+    if cdf is not None and equiv is not None:
+        if cdf.start() < equiv.start():
+            s = str[:cdf.start()] + str[cdf.end():equiv.start()]
+        else:
+            s = str[:equiv.start()]
+    elif cdf is not None:
+        s = str[:cdf.start()] + str[cdf.end():]
+    elif equiv is not None:
+        s = str[:equiv.start()]
+    else:
+        s = str
+    
+    li = re.split(r"(?:[Rr]ecommended )?(?:[Pp]re|[Cc]o)-?requisite(?:s)?:", s)
+    sect = re.findall(r"(?:[Rr]ecommended )?(?:[Pp]re|[Cc]o)-?requisite(?:s)?", s)
+    li[0] = li[0].strip()
+    sect.insert(0, "description")
+
+    info = {}
+
+    if equiv is not None:
+        li[0] += " " + str[equiv.start():]
+    if cdf is not None:
+        li[0] += " This course is not eligible for Credit/D/Fail grading."
+    for i in range(len(li)):
+        info.update({sect[i] : li[i].strip()})
+
+    return info
