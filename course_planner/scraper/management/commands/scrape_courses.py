@@ -182,7 +182,7 @@ class Command(BaseCommand):
                                 course_obj.coreqs = coreqs
                                 course_obj.save()
                                 self.stdout.write(self.style.MIGRATE_HEADING(f"Updated: {course_obj}"))
-                                courses_updated_count += 1
+                                courses_updated += 1
                             else:
                                 self.stdout.write(self.style.NOTICE(f"Existing: {course_obj} (no changes needed)"))
 
@@ -198,8 +198,8 @@ class Command(BaseCommand):
                 else:
                     print("Could not find the h3 tag with class 'text-lg'")  
             except Exception as e:
-                self.stdout.write(self.style.ERROR(f"Error processing listing: {e} - HTML: {course_listings.get_text(strip=True)[:100]}..."))
-                courses_skipped_count += 1
+                self.stdout.write(self.style.ERROR(f"Error processing listing: {e} - HTML: {listing.prettify()[:100]}..."))
+                courses_skipped += 1
                 continue
 
         # Bulk Create New Courses 
