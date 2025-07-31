@@ -86,8 +86,8 @@ class Command(BaseCommand):
                         code = None
                         credits = None
                         desc = ""
-                        prereqs = None
-                        coreqs = None
+                        prereqs = {}
+                        coreqs = {}
 
                         if desc_elem:
                             # Get text from the paragraph (this includes course desc, prereqs, coreqs)
@@ -105,8 +105,9 @@ class Command(BaseCommand):
                             
                             # Make prereqs into dictionary
                             try:
-                                pr = util.req_dict(prereqs)
-                                prereqs_counted += 1
+                                if prereqs:
+                                    pr = util.req_dict(prereqs)
+                                    prereqs_counted += 1
                                 prereqs = json.dumps(pr)
                             except:
                                 failed_prereqs.append(prereqs)
@@ -115,8 +116,9 @@ class Command(BaseCommand):
 
                             # Make coreqs into dictionary
                             try:
-                                cr = util.req_dict(coreqs)
-                                coreqs_counted += 1
+                                if coreqs:
+                                    cr = util.req_dict(coreqs)
+                                    coreqs_counted += 1
                                 coreqs = json.dumps(cr)
                             except:
                                 failed_coreqs.append(coreqs)
