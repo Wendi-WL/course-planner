@@ -1,0 +1,23 @@
+button {
+  width: 100%;
+  padding: 0.825rem;
+  justify-conent: center;
+  align-items: center;
+  background: #5c8080;
+  color: #f5f4f4;
+  font-size: 1.125rem;
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0px 15px 25px 0px rgba(0, 0, 0, 0.3);
+  transition: 0.3s;
+}
+
+button:hover {
+  background: #354a4a;
+}
+
+button:disabled {
+  background: #eeeeee;
+  color: #848d8d;
+  box-shadow: none;
+}

@@ -17,6 +17,7 @@
   align-content: center;
   overflow-x: hidden;
   background-color: #add9d9;
+  z-index: 2000;
 }
 
 .active-link {
@@ -34,7 +35,7 @@ ul {
   list-style-type: none;
   display: flex;
   justify-content: center;
-  max-width: 80dvw;
+  max-width: 100%;
   gap: 22px;
   margin: 0;
   padding: 0;
@@ -63,6 +64,10 @@ li:hover {
 }
 
 @media screen and (max-width: 660px) {
+  .nav-bar {
+    padding: 12px 24px;
+    overflow-y: hidden;
+  }
   .name {
     padding: 0;
   }
@@ -83,7 +88,7 @@ li:hover {
   .open-list {
     opacity: 1;
     text-align: left;
-    max-height: 300px;
+    max-height: 600px;
   }
 
   li {
@@ -91,6 +96,7 @@ li:hover {
     padding-top: 12px;
     padding-bottom: 4px;
     border-bottom: solid;
+    border-width: thin;
     font-size: 14px;
   }
 }

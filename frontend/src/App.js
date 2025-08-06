@@ -5,7 +5,7 @@ import DegreeTracker from "./pages/DegreeTracker/DegreeTracker";
 import Contact from "./pages/Contact/Contact";
 import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import Layout from "./layout/Layout";
-import Footer from "./components/ui/Footer/Footer"
+import Footer from "./components/ui/Footer/Footer";
 
 // put our routes to the diff pages in here
 function App() {
@@ -33,7 +33,7 @@ function App() {
           </Route>
         </Routes>
       </Router>
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 }
