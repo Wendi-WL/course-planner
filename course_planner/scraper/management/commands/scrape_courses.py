@@ -81,14 +81,13 @@ class Command(BaseCommand):
                         # 3. Parse the pre_name_text to get subject, code, and credits:
                         # Pattern: (Subject) (Code) [(Credits)]
                         # CPSC_V 100 (3)
-                        match = re.match(r'([A-Z_]+)\s+(\d+)\s+\((\d+)(?:-\d+)?\)', pre_name_text)
-
+                        match = re.match(r'([A-Z_]+)\s+(\d+)\s+\((\d+)(?:-\d+)?\)', pre_name_text)                 
                         subject = ""
                         code = None
                         credits = None
                         desc = ""
-                        prereqs = None
-                        coreqs = None
+                        prereqs = {}
+                        coreqs = {}
 
                         if desc_elem:
                             # Get text from the paragraph (this includes course desc, prereqs, coreqs)
@@ -96,7 +95,6 @@ class Command(BaseCommand):
 
                             # Separate description from prereqs and coreqs
                             info = util.course_info(desc_text)
-                            
                             for k, v in info.items():
                                 if k == "description":
                                     desc = v
@@ -107,21 +105,25 @@ class Command(BaseCommand):
                             
                             # Make prereqs into dictionary
                             try:
-                                pr = util.req_dict(prereqs)
-                                prereqs_counted += 1
+                                if prereqs:
+                                    pr = util.req_dict(prereqs)
+                                    prereqs_counted += 1
                                 prereqs = json.dumps(pr)
                             except:
                                 failed_prereqs.append(prereqs)
                                 f_prereq_count += 1
+                                continue
 
                             # Make coreqs into dictionary
                             try:
-                                cr = util.req_dict(coreqs)
-                                coreqs_counted += 1
+                                if coreqs:
+                                    cr = util.req_dict(coreqs)
+                                    coreqs_counted += 1
                                 coreqs = json.dumps(cr)
                             except:
                                 failed_coreqs.append(coreqs)
                                 f_coreq_count += 1
+                                continue
 
                         else:
                             print("Could not find the p tag with class 'mt-0'")
@@ -174,7 +176,7 @@ class Command(BaseCommand):
                         # Saving to the Database
                         try:
                             course_obj = Course.objects.get(subject=subject, code=code)
-                            if course_obj.name != course_name or course_obj.credit != credits:
+                            if course_obj.name != course_name or course_obj.credit != credits or course_obj.desc != desc or course_obj.prereqs != prereqs or course_obj.coreqs != coreqs:
                                 course_obj.name = course_name
                                 course_obj.credit = credits
                                 course_obj.desc = desc
@@ -192,7 +194,10 @@ class Command(BaseCommand):
                                     subject=subject,
                                     code=code,
                                     name=course_name,
-                                    credit=credits
+                                    credit=credits,
+                                    desc=desc,
+                                    prereqs=prereqs,
+                                    coreqs=coreqs
                                 )
                             )                
                 else:
@@ -221,3 +226,9 @@ class Command(BaseCommand):
         self.stdout.write(f"Total courses created: {courses_created}")
         self.stdout.write(f"Total courses updated: {courses_updated}")
         self.stdout.write(f"Total courses skipped/failed: {courses_skipped}")
+        self.stdout.write(f"Total prereqs successfully scraped: {prereqs_counted}")
+        self.stdout.write(f"Total coreqs successfully scraped: {coreqs_counted}")
+        self.stdout.write(f"Total prereqs failed tp scrape: {f_prereq_count}")
+        self.stdout.write(f"Prereqs failed: {failed_prereqs}")
+        self.stdout.write(f"Total coreqs failed tp scrape: {f_coreq_count}")
+        self.stdout.write(f"Coreqs failed: {failed_coreqs}")
