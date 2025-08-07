@@ -1,12 +1,14 @@
 # backend/scraper/management/commands/scrape_courses.py
 
-# Add scraper to sys.path
+# Add scraper to sys.path:
+#------------------------------------------------------------------------------------#
 import os
 import sys
 import inspect
 commands = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 course_planner = os.path.dirname(os.path.dirname(os.path.dirname(commands)))
 sys.path.insert(0, course_planner) 
+#------------------------------------------------------------------------------------#
 import requests
 import re # Import for regular expressions
 from bs4 import BeautifulSoup
@@ -16,6 +18,7 @@ import scraper.management.commands.utility as util # Import util for prereq pars
 import json # Import json for storing prereqs/coreqs in db
 from scraper.models import Course # Import Course model
 
+# command to scrape courses : python manage.py scrape_courses https://vancouver.calendar.ubc.ca/course-descriptions/subject/*****
 
 class Command(BaseCommand):
     help = 'Scrapes course data from a specified UBC Course Calendar URL and saves it to the database.'
@@ -105,22 +108,28 @@ class Command(BaseCommand):
                             
                             # Make prereqs into dictionary
                             try:
+                                pr = {}
                                 if prereqs:
                                     pr = util.req_dict(prereqs)
                                     prereqs_counted += 1
                                 prereqs = json.dumps(pr)
-                            except:
+                            except Exception as e:
+                                print(f"error : {e}")
+                                print(f"failed pre: {match}")
                                 failed_prereqs.append(prereqs)
                                 f_prereq_count += 1
                                 continue
 
                             # Make coreqs into dictionary
                             try:
+                                cr = {}
                                 if coreqs:
                                     cr = util.req_dict(coreqs)
                                     coreqs_counted += 1
                                 coreqs = json.dumps(cr)
-                            except:
+                            except Exception as e:
+                                print(f"error : {e}")
+                                print(f"failed co: {match}")
                                 failed_coreqs.append(coreqs)
                                 f_coreq_count += 1
                                 continue

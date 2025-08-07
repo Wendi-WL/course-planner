@@ -1,11 +1,6 @@
-"""
-Creates a Prerequisite Tree Graph for any course at the University of British Columbia.
-Creates Department course graphs showing connections between all courses in that department.
-"""
-
-
 import os
 import re
+import sqlite3
 from graphviz import Digraph
 
 
@@ -14,7 +9,7 @@ from graphviz import Digraph
 os.environ['PATH'] += os.pathsep + 'C:\\Graphviz\\bin'
 # ---------------------------------------------------------------------- #
 
-total = set()
+
 REQUISITE_TYPES = ['Prerequisites', 'Co-Requisites']
 PATH = os.path.join(os.getcwd(), 'static', 'Prerequisite_Trees')
 SPLIT_COURSE = re.compile(r'/|,|&&')
@@ -23,30 +18,38 @@ ARROWHEADS = [
     'icurve', 'curve', 'vee', 'none'
 ]
 
+# try using django built in db accessing stuff
+con = sqlite3.connect("../db.sqlite3")
+cur = con.cursor()
+# figure out why course_data is an empty list
+course_data = cur.execute("SELECT subject, code, coreqs, prereqs FROM scraper_course")
+for course in course_data.fetchall():
+    print(course)
 
-def create_tree(course_df, course, url):
+
+def create_tree(subject, code, url):
     """Starts the tree by adding the selected course as the top element
     @params
-        'course_df': The DataFrame of courses
         'course': The course in question
         'url': URL of current webpage
     """
+    con = sqlite3.connect("../db.sqlite3")
+    cur = con.cursor()
     file_path = os.path.join('..', 'static', 'Prerequisite_Trees', f'{course}.svg')
     if f'{course}.svg' in os.listdir(PATH):
         return file_path
     # Tree used to draw the course prerequisite tree
     tree = Digraph(
-        comment=f'{course} Prerequisites',
+        comment=f'{course} {code} Prerequisites',
         graph_attr={'rankdir': 'TB', 'splines': 'ortho', 'overlap': 'scale'},
         edge_attr={'arrowhead': 'dot', 'arrowsize': '0.8'},
     )
-    course_df = course_df[course_df['Campus'] == course_df.loc[course, 'Campus']]
-    prereqs = set(course_df.loc[course, REQUISITE_TYPES])
-    splitted = list(filter(
-        lambda x: x in course_df.index and x != 'POI',
-        re.compile(r'/|,|&&|;').split(','.join(prereqs))
-    ))
-    if any(prereqs) and splitted and course in course_df.index:
+    prereqs = cur.execute("SELECT prereqs FROM scraper_course WHERE subject=:subject AND code=:code", {'subject' : subject, 'code' : code})
+    #splitted = list(filter(
+    #    lambda x: x in course_df.index and x != 'POI',
+    #    re.compile(r'/|,|&&|;').split(','.join(prereqs))
+    #))
+    if any(prereqs) and (subject, code) in cur.execute("SELECT subject, code FROM scraper_course WHERE subject=:subject AND code=:code", {'subject' : subject, 'code' : code}): #any(prereqs) and splitted and course in course_df.index:
         del splitted
         global total
         total.clear()
