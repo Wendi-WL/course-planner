@@ -21,7 +21,7 @@ p {
 
 .contact-title {
   line-height: 110%;
-  font-size: 62px;
+  font-size: 3.875rem;
   font-weight: 700;
   font-family: Bricolage Grotesque;
   color: black;
@@ -64,5 +64,18 @@ p .desc {
 
   form {
     width: 100%;
+    background-color: blue;
+  }
+
+  .form-container {
+    width: 100%;
+  }
+
+  .contact-title {
+    font-size: 2.25rem;
+  }
+
+  p .desc {
+    font-size: 1rem;
   }
 }
