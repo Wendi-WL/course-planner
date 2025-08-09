@@ -10,6 +10,10 @@ def find_eligible_courses(taken_courses_list):
     Returns:
         list: A list of Course objects that are eligible to be taken.
     """
+
+    # !!!!! return all course info, not just course id
+    # !!!!! also take a subject for filtering (only fetch courses from db that have that subject)
+    
     all_courses = Course.objects.all() # accesses database to get all courses
     taken_courses_set = set(taken_courses_list)
     eligible_courses = []
